@@ -6,6 +6,8 @@ using UnityEngine;
 public class PlayerShoot : MonoBehaviour
 {
     public static Action shotInput;
+    public static Action reloadInput;
+
     void Start()
     {
         
@@ -17,6 +19,10 @@ public class PlayerShoot : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             shotInput?.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            reloadInput?.Invoke();
         }
     }
 }
