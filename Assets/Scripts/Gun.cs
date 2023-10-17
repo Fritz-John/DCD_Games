@@ -4,18 +4,26 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Gun : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] GunData gunData;
     [SerializeField] Transform gunTransform;
+    [SerializeField] Text currentAmmo;
+    [SerializeField] Text textScore;
+    int score;
     float timeSinceLastShot;
     RaycastHit hitInfo;
     private void Start()
     {
+
         PlayerShoot.shotInput += Shoot;
         PlayerShoot.reloadInput += StartReload;
+        currentAmmo.text = gunData.currentAmmo.ToString() + "/" + gunData.magSize.ToString();
     }
 
     public void StartReload()
@@ -44,14 +52,28 @@ public class Gun : MonoBehaviour
         {
             if (CanShoot())
             {
-                if (Physics.Raycast(gunTransform.position, transform.forward, out hitInfo, gunData.maxDistance))
-                {
+                Camera mainCamera = Camera.main;
+                Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+                Ray ray = mainCamera.ScreenPointToRay(screenCenter); 
 
-                    IDamageable damageable = hitInfo.transform.GetComponent<IDamageable>();
-                    if (damageable is Target target && target.health > 0)
+                if (Physics.Raycast(ray, out hitInfo, gunData.maxDistance))
+                {
+                    //Debug.Log(hitInfo.collider.name);
+
+
+                    if (hitInfo.collider.CompareTag("Target"))
                     {
-                        Debug.Log("Damage");
-                        damageable?.Damage(gunData.damage);
+                        score++;
+                        textScore.text = score.ToString();
+                        Target target = hitInfo.transform.parent.GetComponent<Target>();
+                        IDamageable damageable = hitInfo.transform.parent.GetComponent<IDamageable>();
+                        if (target.health > 0)
+                        {
+                            Debug.Log("Damage");
+
+                            damageable?.Damage(gunData.damage);
+                        }
+                      
                     }
 
 
@@ -67,7 +89,9 @@ public class Gun : MonoBehaviour
     private void Update()
     {
         timeSinceLastShot += Time.deltaTime;
-       
+        Debug.DrawRay(gunTransform.position, transform.forward * gunData.maxDistance, Color.green);
+
+        currentAmmo.text = gunData.currentAmmo.ToString() + "/" + gunData.magSize.ToString();
     }
     private void OnGunShot()
     {
