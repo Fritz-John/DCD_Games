@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Target : MonoBehaviour, IDamageable
 {
+    public Text currentTimeAlive;
     public float health;
    
     private Quaternion initialRotation;
@@ -18,8 +20,8 @@ public class Target : MonoBehaviour, IDamageable
     public bool alive = false;
 
     public float timeLeft;
-    public float minTime;
-    public float maxTime;
+    public int minTime;
+    public int maxTime;
     private float setTimer;
     SpawnerTarget target;
 
@@ -43,7 +45,8 @@ public class Target : MonoBehaviour, IDamageable
         timeCount = 0.0f;
 
         health -= damage;
-        if(target != null)
+        setSpeed();
+        if (target != null)
         {
             target.RemoveTargetAtList(gameObject);
         }
@@ -53,11 +56,13 @@ public class Target : MonoBehaviour, IDamageable
     private void Update()
     {
         //target = FindObjectOfType<SpawnerTarget>();
+        currentTimeAlive.text = timeLeft.ToString();
         if (health <= 0)
         {
             initialRotation = Quaternion.Euler(-90f, 0f, -90f);
             targetRotation = Quaternion.Euler(0f, 0f, -90f);
             alive = false;
+
         }
         else if (health > 0)
         {
@@ -67,7 +72,9 @@ public class Target : MonoBehaviour, IDamageable
         }
 
         timeCount += Time.deltaTime;
-        targetToRotate.transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, timeCount * speed);
+     
+            targetToRotate.transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, timeCount * speed);
+        
 
         if (alive)
         {
@@ -77,12 +84,12 @@ public class Target : MonoBehaviour, IDamageable
                 timeLeft -= Time.deltaTime;
 
             }
-            else
+            else if(timeLeft <= 0)
             {
 
                 alive = false;
                 timeCount = 0.0f;
-                timeLeft = setTimer;
+                setSpeed();
                 health = 0;
                 PlayerMovement player = FindObjectOfType<PlayerMovement>();
                 player.MinusHealth();
@@ -113,11 +120,11 @@ public class Target : MonoBehaviour, IDamageable
     }
     public void setSpeed()
     {
-        float randSpeed = Random.Range(7f, 10f);
-        float randTime = Random.Range(minTime, maxTime);
+        float randSpeed = Random.Range(10f, 12f);
+        int randTime = Random.Range(minTime, maxTime);
         speed = randSpeed;
         setTimer = randTime;
-        
+        timeLeft = setTimer;
        
     }
 }

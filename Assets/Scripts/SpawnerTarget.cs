@@ -124,7 +124,7 @@ public class SpawnerTarget : MonoBehaviour
             if (target != null)
             {
                 target.setHealth(10);
-                target.setSpeed();
+                //target.setSpeed();
                 AddTargetToList(target.gameObject);
             }
             else
