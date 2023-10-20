@@ -28,6 +28,8 @@ public class SpawnerTarget : MonoBehaviour
 
     bool checkAlive = false;
 
+    public int SpawnCount;
+
     private void Awake()
     {
         instance = this;
@@ -35,13 +37,21 @@ public class SpawnerTarget : MonoBehaviour
     void Start()
     {
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < SpawnCount; i++)
         {
             
-            float xOffsetSetter = xOffset * i;
-            Vector3 spawnPosition = new Vector3(dummySpawner.position.x + xOffsetSetter, dummySpawner.position.y, dummySpawner.position.z);
 
-            target = Instantiate(dummyTarget, spawnPosition, dummySpawner.rotation);
+
+           
+            float xOffsetSetter = xOffset * i;
+
+            Vector3 spawnDirection = dummySpawner.right;
+
+            Vector3 spawnPosition = dummySpawner.position + spawnDirection * xOffsetSetter;
+
+           // Vector3 spawnPosition = new Vector3(dummySpawner.position.x + xOffsetSetter, dummySpawner.position.y, dummySpawner.position.z);
+
+            target = Instantiate(dummyTarget, spawnPosition, dummySpawner.rotation); 
 
             targets.Add(target);
          

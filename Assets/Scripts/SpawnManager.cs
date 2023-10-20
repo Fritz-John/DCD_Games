@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -14,8 +15,11 @@ public class SpawnManager : MonoBehaviour
     bool gameStart = false;
     float timer = 0;
     public float timerDuration = 5.0f;
+
+    public GameObject spotLight;
     void Start()
     {
+        spotLight.SetActive(true);
         timer = timerDuration;
         spawnTarget = FindObjectsOfType<SpawnerTarget>();
     }
@@ -46,9 +50,11 @@ public class SpawnManager : MonoBehaviour
             if(timerDuration > 0)
             {
                 timerDuration -= Time.deltaTime;
+                spotLight.SetActive(false);
             }
             else
             {
+                spotLight.SetActive(true);
                 int rand = Random.Range(1, 3);
                 timerDuration = rand;
                 gameStart = false;

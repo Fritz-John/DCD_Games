@@ -17,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
 
     public int health = 5;
     public Text textHealth;
+
+    public bool difficult;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,11 +39,16 @@ public class PlayerMovement : MonoBehaviour
         xRot -= PlayerMouseInput.y * lookSensitivity;
         xRot = Mathf.Clamp(xRot, -55f, 55f);
 
-    
-        yRot += PlayerMouseInput.x * lookSensitivity;
-        yRot = Mathf.Clamp(yRot, -70f, 70f);
 
-      
+
+        yRot += PlayerMouseInput.x * lookSensitivity;
+       
+
+        if (!difficult)
+        {
+            
+            yRot = Mathf.Clamp(yRot, -70f, 70f);
+        }
         Quaternion newRotation = Quaternion.Euler(xRot, yRot, 0f);
 
        

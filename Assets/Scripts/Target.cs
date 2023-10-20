@@ -10,6 +10,7 @@ public class Target : MonoBehaviour, IDamageable
    
     private Quaternion initialRotation;
     private Quaternion targetRotation;
+    private Quaternion tryTargetRotation;
 
     public GameObject targetToRotate;
 
@@ -26,6 +27,8 @@ public class Target : MonoBehaviour, IDamageable
     SpawnerTarget target;
 
     private int targetID;
+
+    float targetFloat;
     private void Awake()
     {
         
@@ -56,25 +59,30 @@ public class Target : MonoBehaviour, IDamageable
     private void Update()
     {
         //target = FindObjectOfType<SpawnerTarget>();
+        //initialRotation = Quaternion.Euler(-90f, 0f, -90f);
+        //initialRotation = Quaternion.Euler(0f, 0f, -90f);
         currentTimeAlive.text = timeLeft.ToString();
+        timeCount += Time.deltaTime;
         if (health <= 0)
         {
-            initialRotation = Quaternion.Euler(-90f, 0f, -90f);
-            targetRotation = Quaternion.Euler(0f, 0f, -90f);
+            tryTargetRotation = Quaternion.Euler(0f, 0f, 90f);
+            targetToRotate.transform.localRotation = Quaternion.Lerp(targetToRotate.transform.localRotation, tryTargetRotation, timeCount * speed);
             alive = false;
-
         }
         else if (health > 0)
         {
-            initialRotation = Quaternion.Euler(0f, 0f, -90f);
-            targetRotation = Quaternion.Euler(-90f, 0f, -90f);
+            tryTargetRotation = Quaternion.Euler(-90f, 0f, 90f);
+            targetToRotate.transform.localRotation = Quaternion.Lerp(targetToRotate.transform.localRotation, tryTargetRotation, timeCount * speed);
             alive = true;
         }
 
-        timeCount += Time.deltaTime;
-     
-            targetToRotate.transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, timeCount * speed);
-        
+       
+
+
+        //targetToRotate.transform.rotation = Quaternion.Lerp(targetToRotate.transform.rotation, tryTargetRotation, timeCount * speed);
+
+
+        //targetToRotate.transform.rotation = Quaternion.RotateTowards(targetToRotate.transform.rotation, tryTargetRotation, step);
 
         if (alive)
         {
