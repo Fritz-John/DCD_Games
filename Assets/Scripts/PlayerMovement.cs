@@ -19,17 +19,24 @@ public class PlayerMovement : MonoBehaviour
     public Text textHealth;
 
     public bool difficult;
+
+    SpawnManager spawnManager;
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        spawnManager = FindObjectOfType<SpawnManager>();
+        //Cursor.lockState = CursorLockMode.Locked;
         textHealth.text = health.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MovePlayerCamera();
+        if (spawnManager.gameStart)
+        {
+            MovePlayerCamera();
+        }
+      
     }
     void MovePlayerCamera()
     {

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.UI;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -12,25 +14,39 @@ public class SpawnManager : MonoBehaviour
     SpawnerTarget[] spawnTarget;
     int count = 0;
 
-    bool gameStart = false;
+    public bool gameStart = false;
     float timer = 0;
     public float timerDuration = 5.0f;
 
-    public GameObject spotLight;
+    //public GameObject spotLight;
+
+    public GameObject Spawner1;
+    public GameObject Spawner2;
+
+    public GameObject gamesStart;
+
+    int counting = 0;
     void Start()
     {
-        spotLight.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
         timer = timerDuration;
         spawnTarget = FindObjectsOfType<SpawnerTarget>();
     }
+    public void StartGame()
+    {
+        gamesStart.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        gameStart = true;
+       
+    }
 
-    // Update is called once per frame
     void Update()
     {
 
         target = FindObjectsOfType<Target>();
 
-        count = 0;  // Reset the count in each frame
+        count = 0; 
+
         if (target.Length > 0)
         {
             for (int i = 0; i < target.Length; i++)
@@ -38,35 +54,68 @@ public class SpawnManager : MonoBehaviour
                 if (target[i].alive)
                 {
                     count++;
-                    gameStart= true;
+                    //gameStart= true;
                 }
             }
         }
 
-        //Debug.Log("Number of alive targets: " + count);
 
-        if(count <= 0 && gameStart)
+        counting = 0;
+
+        foreach (Target target1 in target)
         {
-            if(timerDuration > 0)
+            if (target1.alive)
+            {
+                counting++;
+            }
+
+        }
+        if (counting <= 0)
+        {
+            Spawner1.SetActive(false);
+            Spawner2.SetActive(false);
+        }
+        int selectedCount = 0;
+        foreach (Target target1 in target)
+        {
+            if (target1.isSelected)
+            {
+                selectedCount++;
+            }
+        }
+        Debug.Log(count);
+
+     
+        if (count <= 0)
+        {
+            if (timerDuration > 0)
             {
                 timerDuration -= Time.deltaTime;
-                spotLight.SetActive(false);
             }
             else
             {
-                spotLight.SetActive(true);
-                int rand = Random.Range(1, 3);
-                timerDuration = rand;
-                gameStart = false;
+                int rand = Random.Range(0, 2);
+                if (rand == 0)
+                {
+                    Spawner1.SetActive(true);
+                    Spawner2.SetActive(false);
+                }
+                else
+                {
+                    Spawner1.SetActive(false);
+                    Spawner2.SetActive(true);
+                }
+
+                timerDuration = Random.Range(1, 4);
+                //gameStart = false;
+
                 foreach (SpawnerTarget sT in spawnTarget)
                 {
+                   
                     sT.targetsAliveCopy.Clear();
                     sT.GiveHealth();
-                   
                 }
-               
             }
-           
         }
     }
 

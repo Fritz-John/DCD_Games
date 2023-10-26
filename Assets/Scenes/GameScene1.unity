@@ -836,7 +836,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerDuration: 5
-  spotLight: {fileID: 1495787193}
+  Spawner1: {fileID: 1323447295}
+  Spawner2: {fileID: 1303092395}
 --- !u!4 &686152888
 Transform:
   m_ObjectHideFlags: 0

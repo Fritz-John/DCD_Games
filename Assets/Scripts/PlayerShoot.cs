@@ -7,22 +7,27 @@ public class PlayerShoot : MonoBehaviour
 {
     public static Action shotInput;
     public static Action reloadInput;
-
+    SpawnManager spawnManager;
     void Start()
     {
-        
+        spawnManager = FindObjectOfType<SpawnManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (spawnManager.gameStart)
         {
-            shotInput?.Invoke();
+            if (Input.GetMouseButtonDown(0))
+            {
+                shotInput?.Invoke();
+            }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                reloadInput?.Invoke();
+            }
+
         }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            reloadInput?.Invoke();
-        }
+      
     }
 }

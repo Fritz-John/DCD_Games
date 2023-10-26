@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class SpawnerTarget : MonoBehaviour
 {
@@ -16,90 +17,83 @@ public class SpawnerTarget : MonoBehaviour
 
     private List<GameObject> targets = new List<GameObject>();
 
-    public List<GameObject> targetsAlive;
+    public List<GameObject> targetsAlive = new List<GameObject>();
 
-    public List<GameObject> targetsAliveCopy;
+    public List<GameObject> targetsAliveCopy = new List<GameObject>();
 
     private List<int> intList = new List<int>();
 
     public static SpawnerTarget instance;
 
-    Target targetScript;
+    Target[] targetScript;
 
     bool checkAlive = false;
 
     public int SpawnCount;
-
+    SpawnManager spawnManager;
     private void Awake()
     {
         instance = this;
     }
     void Start()
     {
+        spawnManager = FindObjectOfType<SpawnManager>();
 
         for (int i = 0; i < SpawnCount; i++)
         {
-            
 
-
-           
             float xOffsetSetter = xOffset * i;
 
             Vector3 spawnDirection = dummySpawner.right;
 
             Vector3 spawnPosition = dummySpawner.position + spawnDirection * xOffsetSetter;
 
-           // Vector3 spawnPosition = new Vector3(dummySpawner.position.x + xOffsetSetter, dummySpawner.position.y, dummySpawner.position.z);
+            // Vector3 spawnPosition = new Vector3(dummySpawner.position.x + xOffsetSetter, dummySpawner.position.y, dummySpawner.position.z);
 
-            target = Instantiate(dummyTarget, spawnPosition, dummySpawner.rotation); 
+            target = Instantiate(dummyTarget, spawnPosition, dummySpawner.rotation);
 
             targets.Add(target);
-         
+
         }
-        StartCoroutine(CallGiveHealth());
+        //StartCoroutine(CallGiveHealth());
     }
 
     // Update is called once per frame
     void Update()
     {
+
        if (Input.GetKeyDown(KeyCode.Q))
         {
 
             //StartCoroutine(GiveHealth());
           
         }
-        //targetScript = FindObjectOfType<Target>();
-        foreach (GameObject item in targetsAliveCopy)
+
+        if (spawnManager.gameStart)
         {
-            Target target = item.GetComponent<Target>();
-            if (!target.alive && target.health <= 0)
+            foreach (GameObject item in targetsAliveCopy)
             {
-                RemoveTargetAtList(target.gameObject);
-            }
-            if (target.alive)
-            {
-                checkAlive = true;
-            }
-            else
-            {
-                checkAlive = false;
+                Target target = item.GetComponent<Target>();
+
+                if (!target.alive && target.health <= 0)
+                {
+                    RemoveTargetAtList(target.gameObject);
+                }
+                if (target.alive)
+                {
+                    checkAlive = true;
+                }
+                else
+                {
+                    checkAlive = false;
+                }
             }
         }
-
-        //if (targetsAlive.Count < 0)
-        //{
-        //    StartCoroutine(GiveHealth());
-        //}
-        Debug.Log(targetsAliveCopy.Count);
+        //Debug.Log(targetsAlive.Count);
     }
-    private IEnumerator CallGiveHealth()
+    public IEnumerator CallGiveHealth()
     {
-        //foreach (GameObject item in targets)
-        //{
-        //    Target target = item.GetComponent<Target>();
-        //    //target.setHealth(0);
-        //}
-
+        
         yield return new WaitForSeconds(1f);
 
         GiveHealth();
@@ -134,11 +128,13 @@ public class SpawnerTarget : MonoBehaviour
             if (target != null)
             {
                 target.setHealth(10);
+              
                 //target.setSpeed();
                 AddTargetToList(target.gameObject);
             }
             else
             {
+             
                 Debug.LogWarning("Target script not found on the selected GameObject.");
             }
         }
@@ -150,7 +146,12 @@ public class SpawnerTarget : MonoBehaviour
         targetsAlive.Remove(gameObject);
       
     }
+    public void RemoveAll()
+    {
 
+        targetsAlive.Clear();
+        targetsAliveCopy.Clear();
+    }
     public void AddTargetToList(GameObject targetObject)
     {
     

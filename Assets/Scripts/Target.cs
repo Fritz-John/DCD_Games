@@ -29,19 +29,19 @@ public class Target : MonoBehaviour, IDamageable
     private int targetID;
 
     float targetFloat;
+
+    public bool isSelected = false;
     private void Awake()
     {
         
         targetID = GetInstanceID();
-
-
     }
 
     private void Start()
     {
         health = 0;
         setTimer = timeLeft;
- 
+    
     }
     public void Damage(float damage)
     {
@@ -58,9 +58,7 @@ public class Target : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        //target = FindObjectOfType<SpawnerTarget>();
-        //initialRotation = Quaternion.Euler(-90f, 0f, -90f);
-        //initialRotation = Quaternion.Euler(0f, 0f, -90f);
+
         currentTimeAlive.text = timeLeft.ToString();
         timeCount += Time.deltaTime;
         if (health <= 0)
@@ -74,15 +72,8 @@ public class Target : MonoBehaviour, IDamageable
             tryTargetRotation = Quaternion.Euler(-90f, 0f, 90f);
             targetToRotate.transform.localRotation = Quaternion.Lerp(targetToRotate.transform.localRotation, tryTargetRotation, timeCount * speed);
             alive = true;
+
         }
-
-       
-
-
-        //targetToRotate.transform.rotation = Quaternion.Lerp(targetToRotate.transform.rotation, tryTargetRotation, timeCount * speed);
-
-
-        //targetToRotate.transform.rotation = Quaternion.RotateTowards(targetToRotate.transform.rotation, tryTargetRotation, step);
 
         if (alive)
         {
@@ -92,7 +83,7 @@ public class Target : MonoBehaviour, IDamageable
                 timeLeft -= Time.deltaTime;
 
             }
-            else if(timeLeft <= 0)
+            else if (timeLeft <= 0)
             {
 
                 alive = false;
@@ -100,9 +91,14 @@ public class Target : MonoBehaviour, IDamageable
                 setSpeed();
                 health = 0;
                 PlayerMovement player = FindObjectOfType<PlayerMovement>();
-                player.MinusHealth();
-               
-                //SpawnerTarget.instance.RemoveTargetAtList(gameObject);
+                 player.MinusHealth();
+                
+
+                if (target != null)
+                {
+                    target.RemoveTargetAtList(gameObject);
+                }
+                //target.RemoveTargetAtList(gameObject);
 
             }
         }
@@ -116,6 +112,7 @@ public class Target : MonoBehaviour, IDamageable
 
         //}
     }
+    
 
     public void setHealth(float num)
     {
